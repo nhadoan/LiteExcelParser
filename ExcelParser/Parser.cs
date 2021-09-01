@@ -121,6 +121,14 @@ namespace Excel.Parser
                     Cells[i] = new ParsedCell(cell.CellReference.ToString().Replace(RowIndex.ToString(), ""), cellValue);
                 }
             }
+
+            public ParsedCell this[string index]
+            {
+                get
+                {
+                    return Cells.FirstOrDefault(c => c.ColumnIndex == index);
+                }
+            }
         }
         public class ParsedCell
         {
