@@ -108,17 +108,20 @@ namespace Excel.Parser
                 for (int i=0;i<Cells.Length;i++)
                 {
                     var cell = OrgCells[i];
-                    string cellValue = "";
+                    string rawValue = "", cellValue = "";
                     if (cell.DataType != null && cell.DataType == CellValues.SharedString)
                     {
-                        cellValue = GetSharedStringCellValue(wp, cell);
+                        cellValue = rawValue = GetSharedStringCellValue(wp, cell);
                     }
                     else
                     {
-                        cellValue = cell.InnerText;
+                        cellValue = rawValue = cell.InnerText;
+                        if (cell.CellValue != null)
+                        {
+                            cellValue = cell.CellValue.InnerText;
+                        }
                     }
-
-                    Cells[i] = new ParsedCell(cell.CellReference.ToString().Replace(RowIndex.ToString(), ""), cellValue);
+                    Cells[i] = new ParsedCell(cell.CellReference.ToString().Replace(RowIndex.ToString(), ""), cellValue, rawValue);
                 }
             }
 
@@ -134,10 +137,12 @@ namespace Excel.Parser
         {
             public string ColumnIndex { get; private set; }
             public string Value { get; private set; }
-            internal ParsedCell(string index, string value)
+            public string CellValue { get; private set; }
+            internal ParsedCell(string index, string value, string orgVal)
             {
                 ColumnIndex = index;
                 Value = value;
+                CellValue = orgVal;
             }
         }
         
